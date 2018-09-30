@@ -21,22 +21,21 @@ namespace Polly
 
         static void Main(string[] args)
         {
-            OperationWithBasicRetryAsync();
-        }
-
-        public static Task OperationWithBasicRetryAsync()
-        {
             try
             {
-                HttpClient client = new HttpClient() { BaseAddress = new Uri("https://reqres.inn/") };
-                var response = myStrategy.Execute(() => client.GetAsync(("api/users")).Result);
+                OperationWithBasicRetryAsync();
             }
             catch (BrokenCircuitException exception)
             {
                 ConsoleHelper.WriteLineInColor($"A circuit breaker exception occured" + exception, ConsoleColor.Green);
                 Console.ReadLine();
             }
+        }
 
+        public static Task OperationWithBasicRetryAsync()
+        {
+            HttpClient client = new HttpClient() { BaseAddress = new Uri("https://reqres.inn/") };
+            var response = myStrategy.Execute(() => client.GetAsync(("api/users")).Result);
             return Task.FromResult(0);
         }
     }
