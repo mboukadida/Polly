@@ -12,7 +12,15 @@ namespace Polly
 
         static void Main(string[] args)
         {
-            OperationWithBasicRetryAsync();
+            try
+            {
+                OperationWithBasicRetryAsync();
+            }
+            catch (AggregateException exception)
+            {
+                ConsoleHelper.WriteLineInColor($"An aggregate exception occured {exception}", ConsoleColor.Blue);
+                Console.ReadLine();
+            }
         }
 
         public static Task OperationWithBasicRetryAsync()
