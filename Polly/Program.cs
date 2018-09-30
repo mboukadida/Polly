@@ -24,8 +24,7 @@ namespace Polly
                 try
                 {
                     HttpClient client = new HttpClient() { BaseAddress = new Uri("https://reqres.inn/") };
-                    var response = client.GetAsync("api/users");
-                    Console.WriteLine(response.Result);
+                    var result = client.GetAsync("api/users").Result;
                     break;
                 }
                 catch (AggregateException ex)
