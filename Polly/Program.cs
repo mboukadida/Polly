@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -7,8 +6,9 @@ namespace Polly
 {
     class Program
     {
-        private static int retryCount = 3;
-        private static readonly TimeSpan delay = TimeSpan.FromSeconds(5);
+        private static Policy policy = Policy
+            .Handle<AggregateException>()
+            .WaitAndRetry(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
         static void Main(string[] args)
         {
@@ -17,31 +17,8 @@ namespace Polly
 
         public static Task OperationWithBasicRetryAsync()
         {
-            int currentRetry = 0;
-
-            for (; ; )
-            {
-                try
-                {
-                    HttpClient client = new HttpClient() { BaseAddress = new Uri("https://reqres.inn/") };
-                    var response = client.GetAsync("api/users");
-                    Console.WriteLine(response.Result);
-                    break;
-                }
-                catch (AggregateException ex)
-                {
-                    Trace.TraceError("Operation Exception");
-
-                    currentRetry++;
-                    if (currentRetry > retryCount)
-                    {
-                        throw;
-                    }
-                }
-
-                Task.Delay(delay);
-            }
-
+            HttpClient client = new HttpClient() { BaseAddress = new Uri("https://reqres.inn/") };
+            var response = policy.Execute(() => client.GetAsync(("api/users")).Result);
             return Task.FromResult(0);
         }
     }
