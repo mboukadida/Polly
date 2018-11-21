@@ -7,27 +7,25 @@ namespace Polly
     class Program
     {
         private static Policy policy = Policy
-            .Handle<AggregateException>()
-            .WaitAndRetry(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+            .Handle<Exception>()
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(5));
 
-        static void Main(string[] args)
-        {
+        public async Task OperationWithBasicRetryAsync()
+		{
             try
             {
-                OperationWithBasicRetryAsync();
+                await policy.ExecuteAsync(() => TransientOperationAsync());
             }
-            catch (AggregateException exception)
+            catch (Exception)
             {
-                ConsoleHelper.WriteLineInColor($"An aggregate exception occured {exception}", ConsoleColor.Blue);
-                Console.ReadLine();
+                throw;
             }
         }
 
-        public static Task OperationWithBasicRetryAsync()
+        public async Task TransientOperationAsync()
         {
             HttpClient client = new HttpClient() { BaseAddress = new Uri("https://reqres.inn/") };
             var response = policy.Execute(() => client.GetAsync(("api/users")).Result);
-            return Task.FromResult(0);
         }
     }
 }
