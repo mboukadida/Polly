@@ -8,9 +8,14 @@ namespace Polly
     {
         private static Policy policy = Policy
             .Handle<Exception>()
-            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(5));
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromMilliseconds(10));
 
-        public async Task OperationWithBasicRetryAsync()
+        static void Main(string[] args)
+        {
+            OperationWithBasicRetryAsync().Wait();
+        }
+
+        public static async Task OperationWithBasicRetryAsync()
 		{
             try
             {
@@ -22,10 +27,10 @@ namespace Polly
             }
         }
 
-        public async Task TransientOperationAsync()
+        public static async Task TransientOperationAsync()
         {
             HttpClient client = new HttpClient() { BaseAddress = new Uri("https://reqres.inn/") };
-            var response = policy.Execute(() => client.GetAsync(("api/users")).Result);
+            var response = await client.GetAsync("api/users");
         }
     }
 }
