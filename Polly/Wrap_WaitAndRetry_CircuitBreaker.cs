@@ -21,7 +21,7 @@ namespace Polly
 
         private static PolicyWrap policy = Policy.WrapAsync(waitAndRetryPolicy, circuitBreakerPolicy);
 
-        public static async Task OperationWithBasicRetryAsync()
+        public static async Task OperationWithWrappedPolicyAsync()
         {
             try
             {

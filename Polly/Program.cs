@@ -10,7 +10,7 @@ namespace Polly
     {
         static void Main(string[] args)
         {
-            Wrap_WaitAndRetry_CircuitBreaker.OperationWithBasicRetryAsync().Wait();
+            Wrap_WaitAndRetry_CircuitBreaker.OperationWithWrappedPolicyAsync().Wait();
         }
     }
 }
