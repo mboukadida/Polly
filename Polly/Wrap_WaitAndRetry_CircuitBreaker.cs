@@ -17,7 +17,8 @@ namespace Polly
 
         private static readonly Policy circuitBreakerPolicy = Policy
             .Handle<Exception>()
-            .CircuitBreakerAsync(2, TimeSpan.FromSeconds(5));
+            .CircuitBreakerAsync(exceptionsAllowedBeforeBreaking: 3, 
+                durationOfBreak: TimeSpan.FromSeconds(5));
 
         private static PolicyWrap policy = Policy.WrapAsync(waitAndRetryPolicy, circuitBreakerPolicy);
 
